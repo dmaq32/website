@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000"/>
+    <title>Австралия</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="manifest" href="/manifest.json">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Австралия">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <style>
+        #installButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 9999;
+            display: none;
+        }
+        #installButton:hover {
+            background-color: #1565C0;
+        }
+    </style>    
+</head>
+<body>
+    <header>
+        <img src="flag.png" width="150" align="left">
+        <div id="menu">
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="president.html">О Короле</a></li>
+                <li><a href="capital.html">Столица</a></li>
+                <li><a href="feedback.html">Обратная связь</a></li>
+                <li><a href="js.html">ToDoList</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div id="content">
+        <div id="h2">
+            Австралия удивительный континент
+        </div>
+        <div class="bio-container4">
+            <p id="default" style="margin-left: 5px; margin-right: 5px; color: white;">
+                Австралия – это страна контрастов, где современные мегаполисы соседствуют с древними пустынями, а золотые пляжи омываются кристально чистыми водами океана. Это единственное государство в мире, занимающее целый континент, и шестая по площади страна на планете.
+                Австралия славится уникальной природой, богатой культурой аборигенов, дружелюбными жителями и невероятными приключениями.
+            </p>
+        </div>
+        <div id="photo1" style="border-radius: 20px;">
+            <img src="city.jpg" width="1000">
+        </div>
+        <div id="h3">
+            Австралия: царство первозданной природы
+        </div>
+        <div class="bio-container4">
+            <p id="default2">
+                Этот континент – живая книга эволюции, где время течет по-особенному. Изолированный от мира миллионы лет назад, он сохранил уникальные природные чудеса, которых нет больше нигде.
+                Под бирюзовыми водами Тихого океана раскинулся Большой Барьерный риф – гигантский живой организм из кораллов, где в танце разноцветных рыб и черепах продолжается вечная жизнь океана.
+                В сердце континента пустыни с каменными исполинами соседствуют с эвкалиптовыми лесами, наполненными ароматом целебных смол. Здесь обитают удивительные создания – от задумчивых коал до странных утконосов, словно сошедших со страниц древнего бестиария.
+                Ночное небо Австралии – отдельное чудо. Вдали от городов Млечный Путь рассыпается миллиардами звёзд, напоминая о вечности и бесконечности природы.
+                Это земля контрастов – одновременно древняя и вечно юная, суровая и невероятно красивая. Природа Австралии не просто пейзаж, а живое напоминание о хрупкости и величии нашего мира.
+            </p>
+        </div>
+        <div id="photo2">
+            <img src="123.jpg" width="1200">
+        </div>
+    </div>
+
+
+<script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });});
+        }
+    </script>
+</body>
+</html>

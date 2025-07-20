@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>ToDo List</title>
+    <style>
+        body { background-color: #2d2d2d; color: white; }
+        .card { background-color: #3d3d3d; border: 1px solid #1a1a1a; color: white; }
+        .card-header { border-bottom: 1px solid #1a1a1a; }
+        .form-control, .form-control:focus { background-color: #3d3d3d; border: 1px solid #1a1a1a; color: white; }
+        .form-control::placeholder { color: #a0a0a0; }
+        .btn-primary { background-color: #4a4a4a; border-color: #1a1a1a; }
+        .btn-primary:hover { background-color: #5a5a5a; border-color: #2a2a2a; }
+        .btn-link { color: #a0a0a0; text-decoration: none; }
+        .btn-link:hover { color: white; text-decoration: underline; }
+        .task-date { color: #a0a0a0; font-size: 0.9rem; text-align: right; }
+        .sort-buttons, .bulk-actions { margin-bottom: 20px; }
+        .completed { opacity: 0.7; text-decoration: line-through; }
+        .task-checkbox { margin-right: 10px; }
+        .task-header { display: flex; align-items: center; justify-content: space-between; }
+        .task-title-container { display: flex; align-items: center; flex-grow: 1; }
+        #tasksContainer { margin-top: 20px; }
+        .navbar-custom { background-color: #1a1a1a; border-bottom: 1px solid #333; }
+        .navbar-custom .nav-link { color: #a0a0a0; }
+        .navbar-custom .nav-link:hover { color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+        <div class="container">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Вернуться на главную</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <form name="toDoForm">
+            <div class="row align-items-center my-3">
+                <div class="col-8">
+                    <input name="title" class="form-control" type="text" placeholder="Введите название" required>
+                </div>
+                <div class="col-2">
+                    <input name="date" class="form-control" type="date">
+                </div>
+                <div class="col-2">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <input name="color" type="color" class="form-control form-control-color" value="#6c757d">
+                        <label>Цвет</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center mt-2 mb-5">
+                <div class="col-10">
+                    <textarea name="description" class="form-control" placeholder="Введите описание"></textarea>
+                </div>
+                <div class="col d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary" onclick="addToDo()">Добавить задачу</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="bulk-actions">
+            <button type="button" class="btn btn-danger btn-sm me-2" onclick="deleteSelectedTasks()">Удалить выделенные</button>
+            <button type="button" class="btn btn-success btn-sm" onclick="toggleSelectedTasks()">Переключить статус</button>
+        </div>
+
+        <div class="sort-buttons">
+            <button type="button" class="btn btn-secondary btn-sm me-2" onclick="sortTasks('title')">По названию</button>
+            <button type="button" class="btn btn-secondary btn-sm me-2" onclick="sortTasks('date')">По дате</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="sortTasks('id')">По добавлению</button>
+        </div>
+
+        <div id="tasksContainer"></div>
+    </div>
+
+    <script>
+        const todoList = [];
+        const baseTodoId = 'todoitem';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+        });
+
+        function loadTasks() {
+            const savedTasks = localStorage.getItem('todoList');
+            if (savedTasks) {
+                const parsedTasks = JSON.parse(savedTasks);
+                parsedTasks.forEach(task => {
+                    task.date = new Date(task.date);
+                    todoList.push(task);
+                });
+                renderAllTasks();
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem('todoList', JSON.stringify(todoList));
+        }
+
+        function renderAllTasks() {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            todoList.forEach(task => addToDoToHtml(task));
+        }
+
+        function addToDo() {
+            const form = document.forms.toDoForm;
+            const title = form.elements.title.value.trim();
+            
+            if (!title) {
+                alert('Пожалуйста, введите название задачи');
+                return;
+            }
+            
+            const newTodo = {
+                id: todoList.length ? Math.max(...todoList.map(t => t.id)) + 1 : 1,
+                title: title,
+                color: form.elements.color.value,
+                description: form.elements.description.value.trim(),
+                date: form.elements.date.value ? new Date(form.elements.date.value) : new Date(),
+                completed: false
+            };
+            
+            newTodo.dateString = formatDate(newTodo.date);
+            todoList.push(newTodo);
+            saveTasks();
+            renderAllTasks();
+            
+            form.reset();
+            form.elements.title.focus();
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('ru-RU') || 'Без даты';
+        }
+
+        function addToDoToHtml(task) {
+            const div = document.createElement('div');
+            div.id = baseTodoId + task.id;
+            div.className = 'row my-3';
+
+            div.innerHTML = `
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header" style="height: 35px; background-color: ${task.color}"></div>
+                        <div class="card-body">
+                            <div class="task-header">
+                                <div class="task-title-container">
+                                    <input type="checkbox" class="form-check-input task-checkbox" data-task-id="${task.id}" ${task.completed ? 'checked' : ''}>
+                                    <h5 class="card-title ${task.completed ? 'completed' : ''}">${task.title}</h5>
+                                </div>
+                                <span class="task-date">${task.dateString}</span>
+                            </div>
+                            <p class="card-text">${task.description || 'Нет описания'}</p>
+                            <div>
+                                <button type="button" class="btn btn-link" onclick="toggleComplete(${task.id})">
+                                    ${task.completed ? 'Вернуть в работу' : 'Выполнено'}
+                                </button>
+                                <button type="button" class="btn btn-link text-danger" onclick="deleteElement(${task.id})">
+                                    Удалить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+            document.getElementById('tasksContainer').appendChild(div);
+        }
+
+        function deleteElement(id) {
+            const index = todoList.findIndex(item => item.id === id);
+            if (index !== -1) {
+                todoList.splice(index, 1);
+                saveTasks();
+                renderAllTasks();
+            }
+        }
+
+        function toggleComplete(id) {
+            const task = todoList.find(item => item.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+                renderAllTasks();
+            }
+        }
+
+        function deleteSelectedTasks() {
+            const checkboxes = document.querySelectorAll('.task-checkbox:checked');
+            const idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.taskId));
+            
+            idsToDelete.forEach(id => {
+                const index = todoList.findIndex(item => item.id === id);
+                if (index !== -1) todoList.splice(index, 1);
+            });
+            
+            saveTasks();
+            renderAllTasks();
+        }
+
+        function toggleSelectedTasks() {
+            const checkboxes = document.querySelectorAll('.task-checkbox:checked');
+            checkboxes.forEach(cb => {
+                const id = parseInt(cb.dataset.taskId);
+                const task = todoList.find(item => item.id === id);
+                if (task) task.completed = !task.completed;
+            });
+            
+            saveTasks();
+            renderAllTasks();
+        }
+
+        function sortTasks(criteria) {
+            if (criteria === 'title') {
+                todoList.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (criteria === 'date') {
+                todoList.sort((a, b) => a.date - b.date);
+            } else {
+                todoList.sort((a, b) => a.id - b.id);
+            }
+            renderAllTasks();
+        }
+    </script>
+</body>
+</html>
