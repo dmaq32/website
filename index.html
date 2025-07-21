@@ -6,13 +6,14 @@
     <meta name="theme-color" content="#000000"/>
     <title>Австралия</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/website/manifest.json">
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Австралия">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
     
     <style>
         #installButton {
@@ -81,7 +82,7 @@
 <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/website/sw.js')
                     .then(registration => {
                         console.log('ServiceWorker registration successful');
                     })
