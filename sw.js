@@ -24,7 +24,7 @@ const ASSETS = [
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);}));});
+        return cache.addAll(ASSETS);}));});
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
